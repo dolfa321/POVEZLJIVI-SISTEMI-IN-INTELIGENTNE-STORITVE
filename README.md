@@ -1,4 +1,8 @@
 
+ ## Definicija problema
+ 
+ ## Pregled sorodnih del
+ 
  ## Načrt rešitve
  
  - **skupina:** 10
