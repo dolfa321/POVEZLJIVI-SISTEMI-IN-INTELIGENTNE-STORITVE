@@ -4,7 +4,7 @@
  - **skupina:** 10
  - **sodelavci:** Leon Tikvič, Sabina Paurič in Glemen Kolob
  - **repozitorij:** [GIT](https://github.com/dolfa321/POVEZLJIVI-SISTEMI-IN-INTELIGENTNE-STORITVE)
- - **programski jezik:** Python
+ - **programski jezik:** /
  - **opravila**
      1. razvojna iteracija 1
      2. razvojna iteracija 2
