@@ -8,7 +8,7 @@ Po podatkih Svetovne zdravstvene organizacije [[1]](#1) redna telesna aktivnost 
 
 Cilj tega informacijskega sistema je na podlagi podatkov iz zbirk podatkov, kot sta vadba in sledilnik telesne pripravljenosti, statistično analizirati učinkovitost opravljenega treninga. Sistem bo preverjal, kako dobro je posameznik treniral, pri čemer bo upošteval ključne dejavnike, kot so povprečni in maksimalni srčni utrip med vadbo, starost, spol ter opravljena razdalja. 
 
-Pri določanju intenzivnosti vadbe bo uporabljena formula za izračun maksimalnega srčnega utripa, ki sta jo predlagala Tanaka, Monahan in Seals [[3]](#3), saj se je izkazala za natančnejšo od tradicionalnih metod.
+Na podlagi podatkov iz pridobljene podatkovne baze [[3]](#3) bomo s pomočjo nevronskih mrež [[4]](#4) naučili model za odločanje intezivnosti vadbe. Pri določanju intenzivnosti vadbe bo uporabljena formula za izračun maksimalnega srčnega utripa, ki sta jo predlagala Tanaka, Monahan in Seals [[5]](#5), saj se je izkazala za natančnejšo od tradicionalnih metod.
 
     HRmax = 208 - 0.7 x starost
 - HRmax je maksimalni srčni utrip, starost pa izražena v letih.
@@ -37,15 +37,6 @@ MET je enota, ki označuje porabo energije med vadbo glede na bazalno presnovo. 
 
 - kjer je HRrest srčni utrip v mirovanju.
 
-
-### Kategorizacija vadbene intenzivnosti po srčnih conah
-Na podlagi doseženega odstotka maksimalnega srčnega utripa lahko vadbo razvrstimo v naslednje cone:
-
-- Regeneracijska cona: < 50 % HRmax
-- Cona vzdržljivosti: 50–70 % HRmax
-- Aerobna cona: 70–85 % HRmax
-- Anaerobna cona: > 85 % HRmax
-
 ### Indeks učinkovitosti vadbe (angl. Workout Efficiency Index, WEI)
 Kombiniramo več parametrov v enoten kazalnik:
 
@@ -53,23 +44,22 @@ Kombiniramo več parametrov v enoten kazalnik:
 
 - kjer višja vrednost WEI pomeni bolj učinkovito vadbo glede na srčni utrip in prehojeno/pretečeno razdaljo.
 
-S pomočjo algoritmov za analizo podatkov bo agent uporabniku podal oceno uspešnosti vadbe in podal povratne informacije za izboljšanje treninga. Uporaba informacijskih agentov za optimizacijo vadbe je skladna z raziskavami Wilmoreja in Costilla [[4]](4), ki poudarjata pomen prilagojene telesne aktivnosti za doseganje boljših rezultatov.
+S pomočjo naučenega modela bo agent uporabniku podal oceno uspešnosti vadbe in podal povratne informacije. 
 
-Razvoj takšnega sistema bo omogočil boljše razumevanje vadbenih vzorcev ter pripomogel k optimizaciji treningov na podlagi objektivnih fizioloških podatkov.
+Razvoj takšnega sistema bo omogočil boljše razumevanje vadbenih vzorcev ter pripomogel k vpogledu intezivnosti treningov na podlagi objektivnih fizioloških podatkov.
 
-Poleg omenjenih metod in algoritmov bomo podatke pridobivali iz podatkovne baze ter raziskovali sami na sebi. V ta namen bomo mi sami služili kot testni primerki, pri čemer bomo primerjali različne vadbene pristope in njihove učinke. Pri zbiranju podatkov bomo uporabljali pametne zapestnice, kot je Apple Watch, ki omogočajo natančno beleženje srčnega utripa, porabe kalorij in drugih fizioloških parametrov med vadbo. Tako bomo lahko na podlagi realnih podatkov ocenili, kako različni tipi vadb vplivajo na našo telesno pripravljenost in zdravje.
+Poleg omenjenih metod bomo podatke pridobivali iz podatkovne baze ter raziskovali sami na sebi. V ta namen bomo mi sami služili kot testni primerki, pri čemer bomo primerjali različne vadbene pristope in njihove učinke. Pri zbiranju podatkov bomo uporabljali pametne zapestnice, kot je Apple Watch, ki omogočajo natančno beleženje srčnega utripa, porabe kalorij in drugih fizioloških parametrov med vadbo. Tako bomo lahko na podlagi realnih podatkov ocenili, kako učinkovito izvajamo različne tipe vadb. 
 
-Integracija teh podatkov v informacijski agent bo omogočila še bolj natančno statistično preverjanje učinkovitosti zadanega treninga in prilagoditev vadbenih načrtov glede na posameznikove rezultate.
+Integracija teh podatkov v informacijski agent bo omogočila še bolj natančno statistično preverjanje učinkovitosti zadanega treninga in vpogled v posameznikovo učinkovitost in intenziteto. 
  
- **Ključne besede:** Informacijski agent, fitnes sledilniki, statistična analiza vadbe, srčni utrip, učinkovitost treninga, analiza podatkov.
+ **Ključne besede:** Informacijski agent, fitnes sledilniki, analiza vadbe, srčni utrip, učinkovitost treninga, analiza podatkov, nevronske mreže in strojno učenje.
  
 ## Pregled evaluacije rešitve problema
 Za zagotavljanje natančnosti in zanesljivosti informacijskega agenta za statistično preverjanje učinkovitosti zadanega treninga je ključno izvesti temeljito evalvacijo. Cilj evaluacije je preveriti, ali naš sistem pravilno ocenjuje intenzivnost vadbe, fiziološke parametre in posledično učinkovitost samega treninga.
 
-Za dosego tega bomo uporabili tri ključne pristope:
- - Primerjava podatkov: Primerjaj izračune tvojega sistema (npr. HR%, TLI, WEI) s podatki pridobljenimi iz Apple Watch.
- - Statistična analiza: Izvedi Pearsonovo korelacijo ali Bland-Altman analizo za preverjanje natančnosti.
- - Uporabniški testi: Izvedi vadbo s skupino testnih oseb in primerjaj njihovo zaznano obremenitev z rezultati tvojega sistema.
+Za dosego tega bomo uporabili dva ključne pristope:
+ - Učenje nevronske mreže: Iz pridobljenih podatkov [[3]](#3) bomo zgradili model za oceno učinkovitosti izvedene vadbe 
+ - Statistična analiza: Iz pridobljenega modela preverjali rezultate. 
 
  ## Načrt rešitve
  
@@ -78,22 +68,17 @@ Za dosego tega bomo uporabili tri ključne pristope:
  - **repozitorij:** [GIT](https://github.com/dolfa321/POVEZLJIVI-SISTEMI-IN-INTELIGENTNE-STORITVE)
  - **programski jezik:** Python
  - **opravila**
-      1. **Pregled podatkovnih zbirk in izbor katere bomo uporabili**
-        - pregled podatkovnih zbirk
-        - izbor podatkovnih zbirk
-        - vzpostavitev okolja za programiranje
-        - priprava podatkov
-    2. **Implementacija osnovnega sistema odločanja**
-    3. **Optimizacija kode**
-        - optimizacija kode
+    1. **Grajenje nevronske mreže in učenje modela na izbrani podatkovni bazi**
+    3. **Implementacija osnovnega sistema odločanja**
+    4. **Preverjanje natačnosti sistema na podlagi realno pridobljenih podatkov**
+    5. **Optimizacija kode**
         - integracija evalvacijskih metod za merjenje uspešnosti
-    4. **Uporabniški vmesnik**
-        - uporabniški vmesnik
+    6. **Uporabniški vmesnik**
         - pisanje članka
         - primerjava rezultatov
       
 ### Opis rešitve
-Končna rešitev bo delujoč informacijski agent, ki na podlagi podatkov iz pametne zapestnice in shranjenih vadbenih podatkov izračuna ključne kazalnike, kot so HR%, TLI in WEI. Sistem bo uporabnikom nudil vpogled v učinkovitost njihove vadbe ter priporočila za izboljšanje treningov na podlagi zbranih podatkov. Poleg tega bo omogočal primerjavo različnih tipov vadb in spremljanje dolgoročnih sprememb telesne pripravljenosti.
+Končna rešitev bo delujoč informacijski agent, ki na podlagi podatkov iz pametne zapestnice in shranjenih vadbenih podatkov uporabniku objektivno na podlagi naučenega modela poda rezultat o učinkovitosti in intenziteti treninga. 
 
 ### UML diagram
 
@@ -103,6 +88,10 @@ Končna rešitev bo delujoč informacijski agent, ki na podlagi podatkov iz pame
 
 [2] Plews, D. J., Laursen, P. B., Kilding, A. E., & Buchheit, M. (2017). Heart rate variability and training intensity distribution in elite endurance athletes. Journal of Science and Medicine in Sport, 20(8), 798–803.
 
-[3] Tanaka, H., Monahan, K. D., & Seals, D. R. (2001). Age-predicted maximal heart rate revisited. Journal of the American College of Cardiology, 37(1), 153–156.
+[3] Podatkovna baza https://www.kaggle.com/datasets/adilshamim8/workout-and-fitness-tracker-data
 
-[4] Wilmore, J. H., & Costill, D. L. (2004). Physiology of Sport and Exercise. Human Kinetics.
+[4] Zou, Jinming, Yi Han, and Sung-Sau So. "Overview of artificial neural networks." Artificial neural networks: methods and applications (2009): 14-22.
+
+[5] Tanaka, H., Monahan, K. D., & Seals, D. R. (2001). Age-predicted maximal heart rate revisited. Journal of the American College of Cardiology, 37(1), 153–156.
+
+
