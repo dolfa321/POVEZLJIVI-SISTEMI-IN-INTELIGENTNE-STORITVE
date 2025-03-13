@@ -82,6 +82,8 @@ Končna rešitev bo delujoč informacijski agent, ki na podlagi podatkov iz pame
 
 ### UML diagram
 
+![image](image.png)
+
 ## Literatura oziroma pregled sorodnih del
 
 [1] WHO. (2020). Physical activity and young adults: Recommendations for health and fitness. World Health Organization.
