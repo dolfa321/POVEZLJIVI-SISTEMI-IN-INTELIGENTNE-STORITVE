@@ -64,7 +64,7 @@ Za dosego tega bomo uporabili dva ključne pristope:
  ## Načrt rešitve
  
  - **skupina:** 10
- - **sodelavci:** Leon Tikvič, Sabina Paurič in Glemen Kolob
+ - **sodelavci:** Leon Tikvič, Sabina Paurič in Klemen Golob
  - **repozitorij:** [GIT](https://github.com/dolfa321/POVEZLJIVI-SISTEMI-IN-INTELIGENTNE-STORITVE)
  - **programski jezik:** Python
  - **opravila**
