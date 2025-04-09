@@ -198,7 +198,7 @@ def predict_user_workout_interactive(model_path):
         print("Failed to load model. Please check the path.")
         return
 
-    print("\n🟦 Enter your workout data to see your percentile and get personalized feedback.")
+    print("\nEnter your workout data to see your percentile and get personalized feedback.")
 
     try:
         user_workout = {
@@ -211,7 +211,7 @@ def predict_user_workout_interactive(model_path):
 
         # Predict
         user_percentile = model.predict_percentile(user_workout)
-        print(f"\n🟢 Your workout is in the {user_percentile}th percentile.")
+        print(f"\nYour workout is in the {user_percentile}th percentile.")
 
         # Recommendations
         user_recommendations = model.get_improvement_recommendations(user_workout)
