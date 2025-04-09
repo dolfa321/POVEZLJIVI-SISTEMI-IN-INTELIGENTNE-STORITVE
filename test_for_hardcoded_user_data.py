@@ -1,7 +1,10 @@
 import numpy as np
 import tensorflow as tf
 import joblib
+from keras.losses import MeanSquaredError
 
+print("TF version:", tf.__version__)
+print("Loss object:", MeanSquaredError)
 
 def load_workout_model(model_base_path):
     """
@@ -23,7 +26,10 @@ def load_workout_model(model_base_path):
 
     try:
         # Load Keras model
-        loaded_model.model = tf.keras.models.load_model(f"{model_base_path}.h5")
+        loaded_model.model = tf.keras.models.load_model(
+            f"{model_base_path}.h5",
+            custom_objects={'mse': MeanSquaredError()}
+        )
 
         # Load attributes
         attrs = joblib.load(f"{model_base_path}_attrs.pkl")
@@ -182,6 +188,41 @@ def test_model_with_hardcoded_data(model_path):
     print("\nModel architecture:")
     model.model.summary()
 
+def predict_user_workout_interactive(model_path):
+    """
+    Load model and allow user to input workout data manually via terminal.
+    Predict percentile and provide recommendations.
+    """
+    model = load_workout_model(model_path)
+    if model is None:
+        print("Failed to load model. Please check the path.")
+        return
+
+    print("\n🟦 Enter your workout data to see your percentile and get personalized feedback.")
+
+    try:
+        user_workout = {
+            'HRmax': float(input("Enter your max heart rate (HRmax): ")),
+            'HR%': float(input("Enter your heart rate percentage (HR%): ")),
+            'TLI': float(input("Enter your total load index (TLI): ")),
+            'MET': float(input("Enter your MET score: ")),
+            'WEI': float(input("Enter your workout efficiency index (WEI): "))
+        }
+
+        # Predict
+        user_percentile = model.predict_percentile(user_workout)
+        print(f"\n🟢 Your workout is in the {user_percentile}th percentile.")
+
+        # Recommendations
+        user_recommendations = model.get_improvement_recommendations(user_workout)
+        print("\nPersonalized Recommendations:")
+        for metric, rec in user_recommendations.items():
+            print(f"- {metric}: {rec}")
+
+    except Exception as e:
+        print(f"\nInvalid input or error: {str(e)}")
+
+
 
 if __name__ == "__main__":
     import argparse
@@ -193,4 +234,22 @@ if __name__ == "__main__":
 
     # Run the tester with hardcoded data
     # test_model_with_hardcoded_data(args.model_path)
-    test_model_with_hardcoded_data('models/Running')
+    #test_model_with_hardcoded_data('models/Running')
+    #predict_user_workout_interactive('models/Running')
+
+    print("Workout Predictor Menu")
+    print("----------------------------")
+    print("1. Test predefined workouts (beginner, intermediate, etc.)")
+    print("2. Enter your own workout data")
+    print("0. Exit")
+
+    choice = input("Select an option (0–2): ")
+
+    if choice == "1":
+        test_model_with_hardcoded_data('models/Running')
+    elif choice == "2":
+        predict_user_workout_interactive('models/Running')
+    elif choice == "0":
+        print("Exiting")
+    else:
+        print("Invalid choice. Please select 0, 1, or 2.")
