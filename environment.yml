@@ -1,0 +1,12 @@
+name: fitness
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.10
+  - pandas
+  - numpy
+  - tensorflow=2.19
+  - scikit-learn=1.2.2
+  - scipy
+  - joblib

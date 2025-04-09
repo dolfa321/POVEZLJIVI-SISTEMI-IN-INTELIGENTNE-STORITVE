@@ -23,9 +23,10 @@ def load_workout_model(model_base_path):
 
     try:
         # Load Keras model
+        #loaded_model.model = tf.keras.models.load_model(f"{model_base_path}.h5")
         loaded_model.model = tf.keras.models.load_model(
             f"{model_base_path}.h5",
-            custom_objects={'mse': MeanSquaredError()}
+            compile=False
         )
 
         # Load attributes
