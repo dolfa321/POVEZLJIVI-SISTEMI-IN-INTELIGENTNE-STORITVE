@@ -3,9 +3,6 @@ import tensorflow as tf
 import joblib
 from keras.losses import MeanSquaredError
 
-print("TF version:", tf.__version__)
-print("Loss object:", MeanSquaredError)
-
 def load_workout_model(model_base_path):
     """
     Load a saved workout model from .h5 and .pkl files
