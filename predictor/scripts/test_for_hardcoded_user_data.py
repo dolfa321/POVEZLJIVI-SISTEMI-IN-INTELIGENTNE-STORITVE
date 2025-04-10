@@ -221,7 +221,6 @@ def predict_user_workout_interactive(model_path):
         print(f"\nInvalid input or error: {str(e)}")
 
 
-
 if __name__ == "__main__":
     import argparse
 
@@ -244,9 +243,9 @@ if __name__ == "__main__":
     choice = input("Select an option (0–2): ")
 
     if choice == "1":
-        test_model_with_hardcoded_data('models/Running')
+        test_model_with_hardcoded_data('../models/Running')
     elif choice == "2":
-        predict_user_workout_interactive('models/Running')
+        predict_user_workout_interactive('../models/Running')
     elif choice == "0":
         print("Exiting")
     else:
