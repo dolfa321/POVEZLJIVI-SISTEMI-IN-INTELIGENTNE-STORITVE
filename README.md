@@ -70,10 +70,11 @@ Za dosego tega bomo uporabili dva ključne pristope:
  - **opravila**
     1. **Grajenje nevronske mreže in učenje modela na izbrani podatkovni bazi**
     3. **Implementacija osnovnega sistema odločanja**
-    4. **Preverjanje natačnosti sistema na podlagi realno pridobljenih podatkov**
-    5. **Optimizacija kode**
+    4. **Priprava uporabniškega vmesnika in zalednega dela za razčljenjanje realno pridobljenih podatkov**
+    5. **Preverjanje natačnosti sistema na podlagi realno pridobljenih podatkov**
+    6. **Optimizacija kode**
         - integracija evalvacijskih metod za merjenje uspešnosti
-    6. **Uporabniški vmesnik**
+    7. **Uporabniški vmesnik**
         - pisanje članka
         - primerjava rezultatov
       
