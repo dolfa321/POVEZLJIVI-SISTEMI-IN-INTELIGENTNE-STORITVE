@@ -1,6 +1,6 @@
 import pandas as pd
 
-df = pd.read_csv('workout_fitness_tracker_data.csv')
+df = pd.read_csv('../workout_fitness_tracker_data.csv')
 
 
 def calculate_formulas(df):
