@@ -2,3 +2,4 @@ banana
 old
 predictor/output.csv
 predictor/scripts/fit_to_csv.py
+flask/uploads/*
