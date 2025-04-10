@@ -1,14 +1,14 @@
 from flask import Blueprint, request, jsonify
 import os
 
-retrive_bp = Blueprint('retrive', __name__)
+upload_bp = Blueprint('upload', __name__)
 
 # Directory to save uploaded files
 UPLOAD_FOLDER = 'uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-@retrive_bp.route('/retrive', methods=['POST'])
-def retrive_file():
+@upload_bp.route('/upload', methods=['POST'])
+def upload_file():
     if 'file' not in request.files:
         return jsonify({'error': 'No file part in the request'}), 400
 
