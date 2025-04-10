@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Api
+from .retrive import retrive_bp
 
 db = SQLAlchemy()
 
@@ -15,5 +16,8 @@ def create_app():
     api = Api(app)
     api.add_resource(ItemListResource, '/items')
     api.add_resource(ItemResource, '/items/<int:item_id>')
+
+
+    app.register_blueprint(retrive_bp)
 
     return app
