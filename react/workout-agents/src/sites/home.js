@@ -78,14 +78,14 @@ function Home() {
               Naložite svojo datoteko z vadbo in pridobite informacijo o tem, kako uspešni ste bili ter kako lahko svojo učinkovitost še izboljšate.
             </p>
 
-            {/* 🎯 Cilj projekta */}
+            {/* Cilj projekta */}
             <h2 className="text-xl font-semibold mt-6 mb-2 text-blue-700">🎯 Cilj projekta</h2>
             <p className="mb-4 leading-tight">
               Razviti inteligentni sistem, ki na podlagi podatkov iz fitnes sledilnikov (npr. Apple Watch) oceni intenzivnost in učinkovitost treninga.
               Sistem temelji na nevronskih mrežah in fizioloških metrikah kot so srčni utrip, razdalja in trajanje.
             </p>
 
-            {/* 📐 Ključne formule */}
+            {/* Ključne formule */}
             <h2 className="text-xl font-semibold mt-6 mb-2 text-blue-700">📐 Ključne formule</h2>
             <ul className="list-disc list-inside space-y-2 text-sm">
               <li><strong>HRmax:</strong> 208 − 0.7 × starost</li>
