@@ -6,8 +6,8 @@ import Header from './components/nav';
 function App() {
   return (
     <Router>
-        <Header />
-      <div style={{ padding: "2rem" }}>
+        {/* <Header /> */}
+      <div>
         <Routes>
           <Route path="/" element={<Home />} />
         </Routes>
