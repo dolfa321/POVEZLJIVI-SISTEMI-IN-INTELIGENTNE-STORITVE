@@ -35,13 +35,16 @@ function Home() {
   return (
     <div className="w-full h-screen overflow-hidden font-sans bg-gray-50 box-border">
       <div className="w-full h-full flex flex-row gap-0">
+
         {/* Leva stran - Hero komponenta */}
         <div className="w-1/3 h-full overflow-hidden">
           <Hero />
         </div>
 
-        {/* Sredina - Upload datoteke */}
-        <div className="w-1/3 h-full flex items-center justify-center overflow-hidden">
+        {/* Sredina - Upload datoteke + Rezultati */}
+        <div className="w-1/3 h-full flex flex-col items-center justify-center overflow-hidden px-4 gap-8">
+
+          {/* Zgornji del - Upload datoteke */}
           <div className="bg-white border border-gray-300 rounded-xl p-6 shadow w-full max-w-sm box-border">
             <h2 className="text-xl font-semibold mb-4 text-center leading-tight">
               📤 Naloži svojo datoteko z vadbo
@@ -57,10 +60,23 @@ function Home() {
               <p className="text-green-600 mt-3 text-center">{uploadMessage}</p>
             )}
           </div>
+
+          {/* Spodnji del - Rezultati analize (hardcoded for now) */}
+          <div className="bg-white border border-gray-300 rounded-xl p-6 shadow w-full max-w-sm box-border">
+            <h2 className="text-xl font-semibold mb-2 text-center">📊 Rezultat analize</h2>
+            <p className="text-sm text-gray-800 mb-4 text-center">
+              <strong>Elite workout</strong> is in the <span className="text-blue-600 font-semibold">99.7th</span> percentile
+            </p>
+            <div className="text-sm text-gray-700 space-y-2">
+              <p><strong>HRmax:</strong> Your HRmax is unusually high – consider consulting a doctor</p>
+              <p><strong>WEI:</strong> Increase workout efficiency by improving form or adding resistance</p>
+              <p><strong>General:</strong> Maintain your excellent workout routine with proper recovery</p>
+            </div>
+          </div>
         </div>
 
         {/* Desna stran - Tekst */}
-        <div className="w-1/3 h-full flex flex-col justify-start px-4 overflow-hidden pt-8 ">
+        <div className="w-1/3 h-full flex flex-col justify-start px-4 overflow-hidden pt-8">
           <div className="overflow-auto min-h-0">
             <h1 className="text-2xl font-bold mb-4 leading-tight">
               🏃 Evaluator učinkovitosti treninga
