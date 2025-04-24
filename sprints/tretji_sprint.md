@@ -10,7 +10,9 @@ V zalednem delu sistema smo razvili napredno funkcionalnost za obdelavo podatkov
 
 Preko API klica sistem zdaj uporabnikom ponuja dve ključni funkcionalnosti:  
 1. Vrne konkretne predloge za izboljšave v vadbeni rutini  
-2. Podaja odstotno oceno kakovosti opravljene vadbe glede na uporabnikove zgodovinske podatke in cilje  
+2. Podaja odstotno oceno kakovosti opravljene vadbe glede na uporabnikove zgodovinske podatke in cilje
+
+![image](stran.png)
 
 ## Načrt za naslednji sprint  
 
