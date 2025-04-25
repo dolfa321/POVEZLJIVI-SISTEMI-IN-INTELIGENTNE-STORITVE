@@ -33,53 +33,85 @@ function Home() {
   };
 
   return (
-    <div className="p-8 max-w-5xl mx-auto font-sans">
-      <Hero/>
-      <h1 className="text-3xl font-bold mb-4">🏃 Evaluator učinkovitosti treninga</h1>
+    <div className="w-full h-screen overflow-hidden font-sans bg-gray-50 box-border">
+      <div className="w-full h-full flex flex-row gap-0">
 
-      <p className="mb-4">
-        Dobrodošli v sistemu za analizo vaše vadbe! Naš informacijski agent vam pomaga oceniti, kako učinkovita je bila vaša telesna aktivnost na podlagi fizioloških kazalnikov, kot so srčni utrip, razdalja, trajanje in dodatno izračunane metrike, kot so HR%, TLI, MET in WEI.
-      </p>
+        {/* Leva stran - Hero komponenta */}
+        <div className="w-1/3 h-full overflow-hidden">
+          <Hero />
+        </div>
 
-      <p className="mb-4">
-        Uporabljamo modele nevronskih mrež, ki so bili naučeni na dejanskih podatkih, zbranih s pametnimi zapestnicami (Apple Watch, Garmin, Fitbit ...). Sistem omogoča natančno povratno informacijo in personalizirana priporočila glede vaše vadbe.
-      </p>
+        {/* Sredina - Upload datoteke + Rezultati */}
+        <div className="w-1/3 h-full flex flex-col items-center justify-center overflow-hidden px-4 gap-8">
 
-      <p className="mb-8">
-        Naložite svojo datoteko z vadbo (CSV ali JSON) in pridobite informacijo o tem, kako uspešni ste bili ter kako lahko svojo učinkovitost še izboljšate.
-      </p>
+          {/* Zgornji del - Upload datoteke */}
+          <div className="bg-white border border-gray-300 rounded-xl p-6 shadow w-full max-w-sm box-border">
+            <h2 className="text-xl font-semibold mb-4 text-center leading-tight">
+              📤 Naloži svojo datoteko z vadbo
+            </h2>
+            <input type="file" onChange={handleFileChange} className="mb-3" />
+            <button
+              onClick={handleUpload}
+              className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-1 px-4 rounded w-full"
+            >
+              Naloži
+            </button>
+            {uploadMessage && (
+              <p className="text-green-600 mt-3 text-center">{uploadMessage}</p>
+            )}
+          </div>
 
-      <div className="bg-white border border-gray-300 rounded-xl p-6 shadow max-w-md">
-        <h2 className="text-xl font-semibold mb-2">📤 Naloži svojo datoteko z vadbo</h2>
-        <input type="file" onChange={handleFileChange} className="mb-2" />
-        <button
-          onClick={handleUpload}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-1 px-4 rounded ml-2"
-        >
-          Naloži
-        </button>
-        {uploadMessage && (
-          <p className="text-green-600 mt-3">{uploadMessage}</p>
-        )}
-      </div>
+          {/* Spodnji del - Rezultati analize (hardcoded for now) */}
+          <div className="bg-white border border-gray-300 rounded-xl p-6 shadow w-full max-w-sm box-border">
+            <h2 className="text-xl font-semibold mb-2 text-center">📊 Rezultat analize</h2>
+            <p className="text-sm text-gray-800 mb-4 text-center">
+              <strong>Elite workout</strong> is in the <span className="text-blue-600 font-semibold">99.7th</span> percentile
+            </p>
+            <div className="text-sm text-gray-700 space-y-2">
+              <p><strong>HRmax:</strong> Your HRmax is unusually high – consider consulting a doctor</p>
+              <p><strong>WEI:</strong> Increase workout efficiency by improving form or adding resistance</p>
+              <p><strong>General:</strong> Maintain your excellent workout routine with proper recovery</p>
+            </div>
+          </div>
+        </div>
 
-      <div className="mt-12">
-        <h3 className="text-2xl font-bold mb-2">📊 Ključne formule za ocenjevanje vadbe</h3>
-        <ul className="list-disc list-inside mb-6 space-y-1 text-gray-800">
-          <li><strong>HRmax:</strong> 208 - 0.7 × starost</li>
-          <li><strong>HR%:</strong> (HRavg / HRmax) × 100</li>
-          <li><strong>TLI (Obremenitveni indeks):</strong> HRavg × trajanje (v minutah)</li>
-          <li><strong>MET:</strong> (HRavg / HRpočitek) × 3.5</li>
-          <li><strong>WEI (Indeks učinkovitosti):</strong> (HR% × razdalja) / trajanje</li>
-        </ul>
+        {/* Desna stran - Tekst */}
+        <div className="w-1/3 h-full flex flex-col justify-start px-4 overflow-hidden pt-8">
+          <div className="overflow-auto min-h-0">
+            <h1 className="text-2xl font-bold mb-4 leading-tight">
+              🏃 Evaluator učinkovitosti treninga
+            </h1>
 
-        <p className="mb-4">
-          Na osnovi teh vrednosti sistem statistično analizira intenzivnost in učinkovitost vašega treninga ter poda personalizirane predloge za napredek.
-        </p>
+            <p className="mb-4 leading-tight">
+              Dobrodošli v sistemu za analizo vaše vadbe! Naš informacijski agent vam pomaga oceniti, kako učinkovita je bila vaša telesna aktivnost na podlagi fizioloških kazalnikov.
+            </p>
 
-        <p className="text-sm text-gray-600">
-          📌 Razvit s pomočjo tehnologij: Python, TensorFlow, React in analize podatkov iz pametnih naprav.
-        </p>
+            <p className="mb-4 leading-tight">
+              Uporabljamo modele nevronskih mrež, ki so bili naučeni na dejanskih podatkih, zbranih s pametnimi zapestnicami.
+            </p>
+
+            <p className="mb-4 leading-tight">
+              Naložite svojo datoteko z vadbo in pridobite informacijo o tem, kako uspešni ste bili ter kako lahko svojo učinkovitost še izboljšate.
+            </p>
+
+            {/* Cilj projekta */}
+            <h2 className="text-xl font-semibold mt-6 mb-2 text-blue-700">🎯 Cilj projekta</h2>
+            <p className="mb-4 leading-tight">
+              Razviti inteligentni sistem, ki na podlagi podatkov iz fitnes sledilnikov (npr. Apple Watch) oceni intenzivnost in učinkovitost treninga.
+              Sistem temelji na nevronskih mrežah in fizioloških metrikah kot so srčni utrip, razdalja in trajanje.
+            </p>
+
+            {/* Ključne formule */}
+            <h2 className="text-xl font-semibold mt-6 mb-2 text-blue-700">📐 Ključne formule</h2>
+            <ul className="list-disc list-inside space-y-2 text-sm">
+              <li><strong>HRmax:</strong> 208 − 0.7 × starost</li>
+              <li><strong>HR%:</strong> (HRavg ÷ HRmax) × 100</li>
+              <li><strong>TLI:</strong> HRavg × trajanje (v minutah)</li>
+              <li><strong>MET:</strong> (HRavg ÷ HRpočitek) × 3.5</li>
+              <li><strong>WEI:</strong> (HR% × razdalja) ÷ trajanje</li>
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
   );

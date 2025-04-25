@@ -223,7 +223,6 @@ def predict_user_workout_interactive(model_path):
 
 
 if __name__ == "__main__":
-    import argparse
 
     # Set up command line arguments
     # parser = argparse.ArgumentParser(description='Test a workout model with hardcoded data')
