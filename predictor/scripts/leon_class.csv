@@ -1,0 +1,5 @@
+User ID,Age,Gender,Height (cm),Weight (kg),Workout Type,Workout Duration (mins),Calories Burned,Heart Rate (bpm),Steps Taken,Distance (km),Workout Intensity,Sleep Hours,Water Intake (liters),Daily Calories Intake,Resting Heart Rate (bpm),VO2 Max,Body Fat (%),Mood Before Workout,Mood After Workout,HRmax,HR%,TLI,MET,WEI
+,,,,,,53.57,445,123.3,0,0.0,,,,,76,,,,,,,6605.181,5.67828947368421,
+,,,,,,53.57,445,123.3,0,0.0,,,,,76,,,,,,,6605.181,5.67828947368421,
+,23.0,,,,Running,53.57,445,123.3,0,0.0,,,,,76,,,,,191.9,64.25221469515373,6605.181,5.67828947368421,0.0
+,23.0,,,,Running,53.57,445,123.3,0,0.1,,,,,76,,,,,191.9,64.25221469515373,6605.181,5.67828947368421,0.11994066584870959
