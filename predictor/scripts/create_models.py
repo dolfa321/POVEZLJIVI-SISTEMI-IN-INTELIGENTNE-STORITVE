@@ -130,43 +130,43 @@ class WorkoutPercentileModel:
                 diff = target_value - current_value
                 if diff > 5:
                     recommendations[
-                        metric] = f"Increase max heart rate by {diff:.1f} bpm through more intense intervals"
+                        metric] = f"Povečaj največji srčni utrip za {diff:.1f} utripov/min z intenzivnejšimi intervali"
                 elif diff < -5:
-                    recommendations[metric] = "Your HRmax is unusually high - consider consulting a doctor"
+                    recommendations[metric] = "Tvoj HRmax je nenavadno visok – razmisli o posvetu z zdravnikom"
 
             elif metric == 'HR%':
                 diff = target_value - current_value
                 if diff > 5:
                     recommendations[
-                        metric] = f"Spend more time in higher heart rate zones (aim for {target_value:.1f}% of max)"
+                        metric] = f"Preživi več časa v višjih območjih srčnega utripa (ciljaj na {target_value:.1f}% maksimalnega)"
 
             elif metric == 'TLI':
                 diff = (target_value - current_value) / target_value
                 if diff > 0.2:
                     recommendations[
-                        metric] = f"Increase total workout load by {diff * 100:.1f}% through longer duration or higher intensity"
+                        metric] = f"Povečaj skupno obremenitev vadbe za {diff * 100:.1f}% z daljšim trajanjem ali večjo intenzivnostjo"
 
             elif metric == 'MET':
                 diff = target_value - current_value
                 if diff > 0.5:
-                    recommendations[metric] = f"Choose more vigorous activities to increase MET score by {diff:.1f}"
+                    recommendations[metric] = f"Izberi bolj intenzivne aktivnosti za povečanje MET ocene za {diff:.1f}"
 
             elif metric == 'WEI':
                 diff = target_value - current_value
                 if diff > 0.2:
-                    recommendations[metric] = "Increase workout efficiency by improving form or adding resistance"
+                    recommendations[metric] = "Povečaj učinkovitost vadbe z izboljšanjem tehnike ali dodajanjem upora"
                 elif diff < -0.2:
-                    recommendations[metric] = "Your WEI is unusually high - ensure you're not overtraining"
+                    recommendations[metric] = "Tvoj WEI je nenavadno visok – preveri, ali se ne pretreniraš"
 
         # General recommendations based on percentile
         percentile = self.predict_percentile(new_workout)
         if percentile < 50:
             recommendations[
-                'general'] = "Focus on consistency first - aim for regular workouts before increasing intensity"
+                'general'] = "Osredotoči se najprej na doslednost – ciljaj na redno vadbo, preden povečaš intenzivnost"
         elif percentile < 75:
-            recommendations['general'] = "Try incorporating interval training to boost your workout quality"
+            recommendations['general'] = "Poskusi vključiti intervalni trening za izboljšanje kakovosti vadbe"
         else:
-            recommendations['general'] = "Maintain your excellent workout routine with proper recovery"
+            recommendations['general'] = "Ohrani odlično vadbeno rutino z ustreznim okrevanjem"
 
         return recommendations
 
@@ -305,42 +305,42 @@ def load_workout_model(model_base_path):
                 diff = target_value - current_value
                 if diff > 5:
                     recommendations[
-                        metric] = f"Increase max heart rate by {diff:.1f} bpm through more intense intervals"
+                        metric] = f"Povečaj največji srčni utrip za {diff:.1f} utripov/min z intenzivnejšimi intervali"
                 elif diff < -5:
-                    recommendations[metric] = "Your HRmax is unusually high - consider consulting a doctor"
+                    recommendations[metric] = "Tvoj HRmax je nenavadno visok – razmisli o posvetu z zdravnikom"
 
             elif metric == 'HR%':
                 diff = target_value - current_value
                 if diff > 5:
                     recommendations[
-                        metric] = f"Spend more time in higher heart rate zones (aim for {target_value:.1f}% of max)"
+                        metric] = f"Preživi več časa v višjih območjih srčnega utripa (ciljaj na {target_value:.1f}% maksimalnega)"
 
             elif metric == 'TLI':
                 diff = (target_value - current_value) / target_value
                 if diff > 0.2:
                     recommendations[
-                        metric] = f"Increase total workout load by {diff * 100:.1f}% through longer duration or higher intensity"
+                        metric] = f"Povečaj skupno obremenitev vadbe za {diff * 100:.1f}% z daljšim trajanjem ali večjo intenzivnostjo"
 
             elif metric == 'MET':
                 diff = target_value - current_value
                 if diff > 0.5:
-                    recommendations[metric] = f"Choose more vigorous activities to increase MET score by {diff:.1f}"
+                    recommendations[metric] = f"Izberi bolj intenzivne aktivnosti za povečanje MET ocene za {diff:.1f}"
 
             elif metric == 'WEI':
                 diff = target_value - current_value
                 if diff > 0.2:
-                    recommendations[metric] = "Increase workout efficiency by improving form or adding resistance"
+                    recommendations[metric] = "Povečaj učinkovitost vadbe z izboljšanjem tehnike ali dodajanjem upora"
                 elif diff < -0.2:
-                    recommendations[metric] = "Your WEI is unusually high - ensure you're not overtraining"
+                    recommendations[metric] = "Tvoj WEI je nenavadno visok – preveri, ali se ne pretreniraš"
 
         percentile = self.predict_percentile(new_workout)
         if percentile < 50:
             recommendations[
-                'general'] = "Focus on consistency first - aim for regular workouts before increasing intensity"
+                'general'] = "Najprej se osredotoči na doslednost – ciljaj na redne vadbe, preden povečaš intenzivnost"
         elif percentile < 75:
-            recommendations['general'] = "Try incorporating interval training to boost your workout quality"
+            recommendations['general'] = "Poskusi vključiti intervalni trening za izboljšanje kakovosti vadbe"
         else:
-            recommendations['general'] = "Maintain your excellent workout routine with proper recovery"
+            recommendations['general'] = "Ohrani svojo odlično vadbeno rutino z ustreznim počitkom"
 
         return recommendations
 
