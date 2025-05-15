@@ -28,6 +28,10 @@ def upload_file():
         percentile, recommendations = classify_user(file_path, request.form.get('workout_type', 'Running'),
                                                     request.form.get('age', 25))
         print(percentile, recommendations)
+        for f in os.listdir(UPLOAD_FOLDER):
+            file_path = os.path.join(UPLOAD_FOLDER, f)
+            if os.path.isfile(file_path):
+                os.remove(file_path)
         return jsonify({
             'message': 'File processed successfully',
             'percentile': percentile,
