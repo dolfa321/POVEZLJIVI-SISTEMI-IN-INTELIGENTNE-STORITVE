@@ -5,19 +5,22 @@ import axios from 'axios'
 function Home() {
   const [file, setFile] = useState(null);
   const [uploadMessage, setUploadMessage] = useState("");
+  const [selectedWorkout, setSelectedWorkout] = useState("");
+  const [data, setData] = useState(null);
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
   };
 
   const handleUpload = async () => {
-    if (!file) {
-      alert("Najprej izberi datoteko!");
+    if (!file || !selectedWorkout) {
+      alert("Najprej izberi datoteko in vrsto vadbe!");
       return;
     }
 
     const formData = new FormData();
     formData.append('file', file);
+    formData.append('workoutType', selectedWorkout);
 
     try {
       const response = await axios.post('http://localhost:5000/upload', formData, {
@@ -26,7 +29,9 @@ function Home() {
         },
       });
 
-      setUploadMessage(`✅ Odgovor strežnika: ${response.data.message}`);
+      const result = await response.json();
+      setUploadMessage(`✅ Odgovor strežnika: ${result.message}`);
+      setData(result)
     } catch (error) {
       console.error("Napaka pri nalaganju:", error);
       const msg = error.response?.data?.error || "❌ Prišlo je do napake pri nalaganju datoteke.";
@@ -51,6 +56,19 @@ function Home() {
             <h2 className="text-xl font-semibold mb-4 text-center leading-tight">
               📤 Naloži svojo datoteko z vadbo
             </h2>
+            <select
+              value={selectedWorkout}
+              onChange={(e) => setSelectedWorkout(e.target.value)}
+              className="mb-3 w-full border border-gray-300 rounded px-2 py-1"
+            >
+              <option value="">Izberi vrsto vadbe</option>
+              <option value="cardio">Cardio</option>
+              <option value="cycling">Cycling</option>
+              <option value="hit">HIT</option>
+              <option value="running">Running</option>
+              <option value="strength">Strength</option>
+              <option value="yoga">Yoga</option>
+            </select>
             <input type="file" onChange={handleFileChange} className="mb-3" />
             <button
               onClick={handleUpload}
@@ -64,17 +82,22 @@ function Home() {
           </div>
 
           {/* Spodnji del - Rezultati analize (hardcoded for now) */}
-          <div className="bg-white border border-gray-300 rounded-xl p-6 shadow w-full max-w-sm box-border">
-            <h2 className="text-xl font-semibold mb-2 text-center">📊 Rezultat analize</h2>
-            <p className="text-sm text-gray-800 mb-4 text-center">
-              <strong>Elite workout</strong> is in the <span className="text-blue-600 font-semibold">99.7th</span> percentile
-            </p>
-            <div className="text-sm text-gray-700 space-y-2">
-              <p><strong>HRmax:</strong> Your HRmax is unusually high – consider consulting a doctor</p>
-              <p><strong>WEI:</strong> Increase workout efficiency by improving form or adding resistance</p>
-              <p><strong>General:</strong> Maintain your excellent workout routine with proper recovery</p>
+          {data && (
+            <div className="bg-white border border-gray-300 rounded-xl p-6 shadow w-full max-w-sm box-border">
+              <h2 className="text-xl font-semibold mb-2 text-center">📊 Rezultat analize</h2>
+              <p className="text-sm text-gray-800 mb-4 text-center">
+                <strong>Your workout</strong> is in the <span className="text-blue-600 font-semibold">{data.percentile}th</span> percentile.
+              </p>
+              <div className="text-sm text-gray-700 space-y-2">
+                <p><strong>💡 Recommendations:</strong></p>
+                <p><strong>HR%:</strong> {data.rec.hr}</p>
+                <p><strong>TLI:</strong> {data.rec.tli}</p>
+                <p><strong>MET:</strong> {data.rec.met}</p>
+                <p><strong>WEI:</strong> {data.rec.wei}</p>
+                <p><strong>General:</strong> {data.rec.general}</p>
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Desna stran - Tekst */}
