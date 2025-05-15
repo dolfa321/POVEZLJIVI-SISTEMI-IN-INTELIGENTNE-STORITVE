@@ -90,10 +90,10 @@ function Home() {
               </p>
               <div className="text-sm text-gray-700 space-y-2">
                 <p><strong>💡 Recommendations:</strong></p>
-                <p><strong>HR%:</strong> {data.rec.hr}</p>
-                <p><strong>TLI:</strong> {data.rec.tli}</p>
-                <p><strong>MET:</strong> {data.rec.met}</p>
-                <p><strong>WEI:</strong> {data.rec.wei}</p>
+                <p><strong>HR%:</strong> {data.rec["HR%"]}</p>
+                <p><strong>TLI:</strong> {data.rec.TLI}</p>
+                <p><strong>MET:</strong> {data.rec.MET}</p>
+                <p><strong>WEI:</strong> {data.rec.WEI}</p>
                 <p><strong>General:</strong> {data.rec.general}</p>
               </div>
             </div>
