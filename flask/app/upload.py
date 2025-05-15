@@ -18,6 +18,11 @@ def upload_file():
         return jsonify({'error': 'No file part in the request'}), 400
 
     file = request.files['file']
+    print("Workout Type from frontend:", request.form.get('workoutType'))
+    print()
+    print()
+    print()
+    print()
     if file.filename == '':
         return jsonify({'error': 'No selected file'}), 400
 
@@ -25,7 +30,9 @@ def upload_file():
     file.save(file_path)
 
     try:
-        percentile, recommendations = classify_user(file_path, request.form.get('workout_type', 'Running'),
+        percentile, recommendations = classify_user(file_path, request.form.get('workout_type',
+                                                                                request.form.get('workoutType',
+                                                                                                 'Strength')),
                                                     request.form.get('age', 25))
         print(percentile, recommendations)
         for f in os.listdir(UPLOAD_FOLDER):
