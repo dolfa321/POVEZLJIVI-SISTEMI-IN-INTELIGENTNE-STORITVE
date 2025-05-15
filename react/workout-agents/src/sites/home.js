@@ -32,6 +32,7 @@ function Home() {
       const result = await response.json();
       setUploadMessage(`✅ Odgovor strežnika: ${result.message}`);
       setData(result)
+      console.print(result)
     } catch (error) {
       console.error("Napaka pri nalaganju:", error);
       const msg = error.response?.data?.error || "❌ Prišlo je do napake pri nalaganju datoteke.";
@@ -83,21 +84,21 @@ function Home() {
 
           {/* Spodnji del - Rezultati analize (hardcoded for now) */}
           {data && (
-            <div className="bg-white border border-gray-300 rounded-xl p-6 shadow w-full max-w-sm box-border">
-              <h2 className="text-xl font-semibold mb-2 text-center">📊 Rezultat analize</h2>
-              <p className="text-sm text-gray-800 mb-4 text-center">
-                <strong>Your workout</strong> is in the <span className="text-blue-600 font-semibold">{data.percentile}th</span> percentile.
-              </p>
-              <div className="text-sm text-gray-700 space-y-2">
-                <p><strong>💡 Recommendations:</strong></p>
-                <p><strong>HR%:</strong> {data.rec["HR%"]}</p>
-                <p><strong>TLI:</strong> {data.rec.TLI}</p>
-                <p><strong>MET:</strong> {data.rec.MET}</p>
-                <p><strong>WEI:</strong> {data.rec.WEI}</p>
-                <p><strong>General:</strong> {data.rec.general}</p>
-              </div>
+          <div className="bg-white border border-gray-300 rounded-xl p-6 shadow w-full max-w-sm box-border">
+            <h2 className="text-xl font-semibold mb-2 text-center">📊 Rezultat analize</h2>
+            <p className="text-sm text-gray-800 mb-4 text-center">
+              <strong>Your workout</strong> is in the <span className="text-blue-600 font-semibold">{data.percentile}th</span> percentile.
+            </p>
+            <div className="text-sm text-gray-700 space-y-2">
+              <p><strong>💡 Recommendations:</strong></p>
+              {Object.entries(data.rec).map(([key, value]) => (
+                <p key={key}>
+                  <strong>{key}:</strong> {value}
+                </p>
+              ))}
             </div>
-          )}
+          </div>
+        )}
         </div>
 
         {/* Desna stran - Tekst */}
