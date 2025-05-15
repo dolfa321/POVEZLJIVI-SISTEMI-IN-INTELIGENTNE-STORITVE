@@ -51,6 +51,7 @@ def classify_user(path, workout_type, age):
     print("💡 Recommendations:")
     for key, value in recommendations.items():
         print(f"- {key}: {value}")
+    return percentile, recommendations
 
 
 def test():

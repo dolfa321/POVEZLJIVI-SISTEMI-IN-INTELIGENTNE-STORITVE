@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import Hero from '../components/hero';
+import axios from 'axios'
 
 function Home() {
   const [file, setFile] = useState(null);
@@ -19,16 +20,17 @@ function Home() {
     formData.append('file', file);
 
     try {
-      const response = await fetch('http://localhost:5000/upload', {
-        method: 'POST',
-        body: formData,
+      const response = await axios.post('http://localhost:5000/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
       });
 
-      const result = await response.json();
-      setUploadMessage(`✅ Odgovor strežnika: ${result.message}`);
+      setUploadMessage(`✅ Odgovor strežnika: ${response.data.message}`);
     } catch (error) {
       console.error("Napaka pri nalaganju:", error);
-      setUploadMessage("❌ Prišlo je do napake pri nalaganju datoteke.");
+      const msg = error.response?.data?.error || "❌ Prišlo je do napake pri nalaganju datoteke.";
+      setUploadMessage(msg);
     }
   };
 

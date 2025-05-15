@@ -25,12 +25,15 @@ def upload_file():
     file.save(file_path)
 
     try:
-        result = classify_user(file_path, request.form.get('workout_type', 'Running'), request.form.get('age', 25))
-
+        percentile, recommendations = classify_user(file_path, request.form.get('workout_type', 'Running'),
+                                                    request.form.get('age', 25))
+        print(percentile, recommendations)
         return jsonify({
             'message': 'File processed successfully',
-            'workout_data': result
+            'percentile': percentile,
+            'rec': recommendations
         }), 200
 
     except Exception as e:
+        print(f"Error processing file: {str(e)}")
         return jsonify({'error': 'An error occurred while processing the request', 'details': str(e)}), 500
