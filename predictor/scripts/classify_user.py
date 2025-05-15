@@ -1,7 +1,7 @@
 import os
 import pandas as pd
-from fit_to_csv import parse_fit_file
-from test_for_hardcoded_user_data import \
+from predictor.scripts.fit_to_csv import parse_fit_file
+from predictor.scripts.test_for_hardcoded_user_data import \
     load_workout_model
 
 
