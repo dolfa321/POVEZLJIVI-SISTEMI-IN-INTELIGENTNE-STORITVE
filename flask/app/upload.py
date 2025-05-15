@@ -1,15 +1,10 @@
 import sys
-
-from flask import Blueprint, request, jsonify
 import os
-import subprocess
-import json
-from pathlib import Path
 
 base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
 sys.path.insert(0, base_dir)
-
 from predictor.scripts.classify_user import classify_user
+from flask import Blueprint, request, jsonify
 
 upload_bp = Blueprint('upload', __name__)
 
