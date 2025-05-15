@@ -5,85 +5,85 @@ from predictor.scripts.test_for_hardcoded_user_data import \
     load_workout_model
 
 
-def izracunaj_formule(df):
-    df['HRmax'] = 208 - 0.7 * df['Starost']
-    df['HR%'] = (df['Srčni utrip (bpm)'] / df['HRmax']) * 100
-    df['TLI'] = df['Srčni utrip (bpm)'] * df['Trajanje vadbe (min)']
-    df['MET'] = (df['Srčni utrip (bpm)'] / df['Počivalni srčni utrip (bpm)']) * 3.5
-    df['WEI'] = (df['HR%'] * df['Razdalja (km)']) / df['Trajanje vadbe (min)']
+def calculate_formulas(df):
+    df['HRmax'] = 208 - 0.7 * df['Age']
+    df['HR%'] = (df['Heart Rate (bpm)'] / df['HRmax']) * 100
+    df['TLI'] = df['Heart Rate (bpm)'] * df['Workout Duration (mins)']
+    df['MET'] = (df['Heart Rate (bpm)'] / df['Resting Heart Rate (bpm)']) * 3.5
+    df['WEI'] = (df['HR%'] * df['Distance (km)']) / df['Workout Duration (mins)']
     return df
 
 
-def pridobi_najnovejse_podatke_o_vadbi(df):
-    """Predpostavlja, da zadnja vrstica predstavlja najnovejše podatke o vadbi"""
-    zadnja = df.iloc[-1]
+def extract_latest_workout_metrics(df):
+    """Assumes latest row represents the latest workout data"""
+    last = df.iloc[-1]
     return {
-        'HRmax': zadnja['HRmax'],
-        'HR%': zadnja['HR%'],
-        'TLI': zadnja['TLI'],
-        'MET': zadnja['MET'],
-        'WEI': zadnja['WEI']
+        'HRmax': last['HRmax'],
+        'HR%': last['HR%'],
+        'TLI': last['TLI'],
+        'MET': last['MET'],
+        'WEI': last['WEI']
     }
 
 
-def razvrsti_uporabnika(pot, tip_vadbe, starost):
-    parse_fit_file(pot, pot + ".csv", starost, tip_vadbe)
-    print(f"✅ Podatki iz datoteke 'teon' so bili analizirani in shranjeni v 'output.csv'")
+def classify_user(path, workout_type, age):
+    parse_fit_file(path, path + ".csv", age, workout_type)
+    print(f"✅ Parsed data from 'teon' and saved to 'output.csv'")
 
-    df = pd.read_csv(pot + ".csv")
-    df = izracunaj_formule(df)
-    df.to_csv(pot + "class.csv", index=False)
+    df = pd.read_csv(path + ".csv")
+    df = calculate_formulas(df)
+    df.to_csv(path + "class.csv", index=False)
 
-    pot_modela = f"../models/{tip_vadbe}"
+    model_path = f"../models/{workout_type}"
 
-    model = load_workout_model(pot_modela)
+    model = load_workout_model(model_path)
     if model is None:
-        print(f"❌ Ni uspelo naložiti modela za {tip_vadbe}")
+        print(f"❌ Failed to load model for {workout_type}")
         return
 
-    podatki_o_vadbi = pridobi_najnovejse_podatke_o_vadbi(df)
-    print(f"📊 Najnovejši podatki o vadbi: {podatki_o_vadbi}")
+    workout_data = extract_latest_workout_metrics(df)
+    print(f"📊 Latest workout data extracted: {workout_data}")
 
-    percentil = model.predict_percentile(podatki_o_vadbi)
-    priporocila = model.get_improvement_recommendations(podatki_o_vadbi)
+    percentile = model.predict_percentile(workout_data)
+    recommendations = model.get_improvement_recommendations(workout_data)
 
-    print(f"\n📊 Vaša vadba je v {percentil}. percentilu.\n")
-    print("💡 Priporočila:")
-    for kljuc, vrednost in priporocila.items():
-        print(f"- {kljuc}: {vrednost}")
-    return percentil, priporocila
+    print(f"\n📊 Your workout is in the {percentile}th percentile.\n")
+    print("💡 Recommendations:")
+    for key, value in recommendations.items():
+        print(f"- {key}: {value}")
+    return percentile, recommendations
 
 
 def test():
     parse_fit_file("../teon2.fit", "output.csv")
-    print(f"✅ Podatki iz datoteke 'teon' so bili analizirani in shranjeni v 'output.csv'")
+    print(f"✅ Parsed data from 'teon' and saved to 'output.csv'")
 
     df = pd.read_csv("output.csv")
-    df = izracunaj_formule(df)
+    df = calculate_formulas(df)
     df.to_csv("leon_class.csv", index=False)
 
-    # Trdo kodiran tip vadbe in pot modela
-    tip_vadbe = "Tek"
-    pot_modela = f"../models/{tip_vadbe}"
+    # Hardcoded workout type and model path
+    workout_type = "Running"
+    model_path = f"../models/{workout_type}"
 
-    # Naloži model
-    model = load_workout_model(pot_modela)
+    # Load the model
+    model = load_workout_model(model_path)
     if model is None:
-        print(f"❌ Ni uspelo naložiti modela za {tip_vadbe}")
+        print(f"❌ Failed to load model for {workout_type}")
         return
 
-    # Pridobi metrike za napoved
-    podatki_o_vadbi = pridobi_najnovejse_podatke_o_vadbi(df)
-    print(f"📊 Najnovejši podatki o vadbi: {podatki_o_vadbi}")
+    # Extract metrics for prediction
+    workout_data = extract_latest_workout_metrics(df)
+    print(f"📊 Latest workout data extracted: {workout_data}")
 
-    # Napoved percentila in izpis priporočil
-    percentil = model.predict_percentile(podatki_o_vadbi)
-    priporocila = model.get_improvement_recommendations(podatki_o_vadbi)
+    # Predict percentile and print recommendations
+    percentile = model.predict_percentile(workout_data)
+    recommendations = model.get_improvement_recommendations(workout_data)
 
-    print(f"\n📊 Vaša vadba je v {percentil}. percentilu.\n")
-    print("💡 Priporočila:")
-    for kljuc, vrednost in priporocila.items():
-        print(f"- {kljuc}: {vrednost}")
+    print(f"\n📊 Your workout is in the {percentile}th percentile.\n")
+    print("💡 Recommendations:")
+    for key, value in recommendations.items():
+        print(f"- {key}: {value}")
 
 
 if __name__ == "__main__":

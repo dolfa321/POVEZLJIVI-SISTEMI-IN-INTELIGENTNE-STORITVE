@@ -9,56 +9,56 @@ from sklearn.preprocessing import StandardScaler
 from scipy.stats import percentileofscore
 
 
-class ModelOdstotkovVadbe:
-    def __init__(self, pot_do_podatkov):
+class WorkoutPercentileModel:
+    def __init__(self, data_path):
         """
-        Inicializiraj model z vadbenimi podatki iz CSV datoteke.
+        Initialize the model with workout data from a CSV file.
 
         Args:
-            pot_do_podatkov (str): Pot do CSV datoteke, ki vsebuje vadbene podatke
+            data_path (str): Path to the CSV file containing workout data
         """
-        # Naloži in pripravi podatke
-        df = pd.read_csv(pot_do_podatkov)
-        self.lastnosti = ['HRmax', 'HR%', 'TLI', 'MET', 'WEI']
-        self.podatki_vadbe = df[self.lastnosti]
+        # Load and prepare data
+        df = pd.read_csv(data_path)
+        self.features = ['HRmax', 'HR%', 'TLI', 'MET', 'WEI']
+        self.workout_data = df[self.features]
 
-        # Izračunaj odstotke za vsako vadbo v podatkovni zbirki
-        skalirnik = StandardScaler()
-        skalirani_podatki = skalirnik.fit_transform(self.podatki_vadbe)
-        sestavljeni_rezultati = skalirani_podatki.mean(axis=1)
-        self.odstotki = np.array([percentileofscore(sestavljeni_rezultati, rezultat)
-                                  for rezultat in sestavljeni_rezultati])
+        # Calculate percentiles for each workout in the dataset
+        scaler = StandardScaler()
+        scaled_data = scaler.fit_transform(self.workout_data)
+        composite_scores = scaled_data.mean(axis=1)
+        self.percentiles = np.array([percentileofscore(composite_scores, score)
+                                     for score in composite_scores])
 
-        # Shrani metrike za zgornjih 10% vadb za primerjavo
-        prag_top_10 = np.percentile(self.odstotki, 90)
-        self.najboljse_vadbe = self.podatki_vadbe[self.odstotki >= prag_top_10]
-        self.najboljse_metrike = {
-            'HRmax': self.najboljse_vadbe['HRmax'].median(),
-            'HR%': self.najboljse_vadbe['HR%'].median(),
-            'TLI': self.najboljse_vadbe['TLI'].median(),
-            'MET': self.najboljse_vadbe['MET'].median(),
-            'WEI': self.najboljse_vadbe['WEI'].median()
+        # Store metrics of top 10% workouts for comparison
+        top_10_threshold = np.percentile(self.percentiles, 90)
+        self.top_workouts = self.workout_data[self.percentiles >= top_10_threshold]
+        self.top_metrics = {
+            'HRmax': self.top_workouts['HRmax'].median(),
+            'HR%': self.top_workouts['HR%'].median(),
+            'TLI': self.top_workouts['TLI'].median(),
+            'MET': self.top_workouts['MET'].median(),
+            'WEI': self.top_workouts['WEI'].median()
         }
 
-        # Pripravi podatke za nevronsko mrežo
-        self.X = self.podatki_vadbe.values
-        self.y = self.odstotki / 100  # Prilagodi na obseg 0-1
+        # Prepare data for neural network
+        self.X = self.workout_data.values
+        self.y = self.percentiles / 100  # Scale to 0-1 range
 
-        # Razdeli podatke
+        # Split data
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(
             self.X, self.y, test_size=0.2, random_state=42)
 
-        # Skaliranje lastnosti
-        self.skalirnik = StandardScaler()
-        self.X_train = self.skalirnik.fit_transform(self.X_train)
-        self.X_test = self.skalirnik.transform(self.X_test)
+        # Feature scaling
+        self.scaler = StandardScaler()
+        self.X_train = self.scaler.fit_transform(self.X_train)
+        self.X_test = self.scaler.transform(self.X_test)
 
-        # Zgradi in treniraj model
-        self.model = self._zgradi_model()
-        self._treniraj_model()
+        # Build and train model
+        self.model = self._build_model()
+        self._train_model()
 
-    def _zgradi_model(self):
-        """Zgradi arhitekturo nevronske mreže"""
+    def _build_model(self):
+        """Build the neural network architecture"""
         model = tf.keras.Sequential([
             tf.keras.layers.Dense(64, activation='relu', input_shape=(5,)),
             tf.keras.layers.Dropout(0.2),
@@ -71,283 +71,283 @@ class ModelOdstotkovVadbe:
                       metrics=['mae'])
         return model
 
-    def _treniraj_model(self, epohe=100, velikost_skupka=32):
-        """Treniraj nevronsko mrežo"""
-        zgodnje_ustavljanje = tf.keras.callbacks.EarlyStopping(
+    def _train_model(self, epochs=100, batch_size=32):
+        """Train the neural network"""
+        early_stopping = tf.keras.callbacks.EarlyStopping(
             monitor='val_loss', patience=10, restore_best_weights=True)
 
-        self.zgodovina = self.model.fit(
+        self.history = self.model.fit(
             self.X_train, self.y_train,
             validation_data=(self.X_test, self.y_test),
-            epochs=epohe,
-            batch_size=velikost_skupka,
-            callbacks=[zgodnje_ustavljanje],
+            epochs=epochs,
+            batch_size=batch_size,
+            callbacks=[early_stopping],
             verbose=0)
 
-    def napovej_odstotek(self, nova_vadba):
+    def predict_percentile(self, new_workout):
         """
-        Napovej odstotek za novo vadbo.
+        Predict the percentile of a new workout.
 
         Args:
-            nova_vadba (dict ali list): Podatki o novi vadbi, ki vsebujejo vrednosti za:
-                HRmax, HR%, TLI, MET, WEI (v tem vrstnem redu, če uporabljate seznam)
+            new_workout (dict or list): New workout data containing values for:
+                HRmax, HR%, TLI, MET, WEI (in order if using list)
 
         Returns:
-            float: Odstotek (0-100)
+            float: Percentile score (0-100)
         """
-        # Pretvori vhod v numpy array
-        if isinstance(nova_vadba, dict):
-            vhodni_podatki = np.array([nova_vadba[lastnost] for lastnost in self.lastnosti]).reshape(1, -1)
+        # Convert input to numpy array
+        if isinstance(new_workout, dict):
+            input_data = np.array([new_workout[feat] for feat in self.features]).reshape(1, -1)
         else:
-            vhodni_podatki = np.array(nova_vadba).reshape(1, -1)
+            input_data = np.array(new_workout).reshape(1, -1)
 
-        # Skaliraj vhod
-        skaliran_vhod = self.skalirnik.transform(vhodni_podatki)
+        # Scale the input
+        scaled_input = self.scaler.transform(input_data)
 
-        # Napovej (izhod je 0-1, zato ga pomnožimo s 100 za odstotek)
-        odstotek = self.model.predict(skaliran_vhod, verbose=0)[0][0] * 100
+        # Predict (output is 0-1, so we multiply by 100 to get percentile)
+        percentile = self.model.predict(scaled_input, verbose=0)[0][0] * 100
 
-        return round(odstotek, 2)
+        return round(percentile, 2)
 
-    def pridobi_priporocila_za_izboljsanje(self, nova_vadba):
+    def get_improvement_recommendations(self, new_workout):
         """
-        Priskrbi priporočila za izboljšanje vadbe na podlagi primerjave z najboljšimi vadbami.
+        Provides recommendations to improve the workout based on comparison with top workouts.
 
         Args:
-            nova_vadba (dict): Slovar, ki vsebuje metrike vadbe
+            new_workout (dict): Dictionary containing the workout metrics
 
         Returns:
-            dict: Slovar s priporočili za vsako metriko
+            dict: Dictionary with recommendations for each metric
         """
-        priporocila = {}
+        recommendations = {}
 
-        # Primerjaj vsako metriko z najboljšimi vadbami
-        for metrika in self.lastnosti:
-            trenutna_vrednost = nova_vadba[metrika]
-            ciljna_vrednost = self.najboljse_metrike[metrika]
+        # Compare each metric with top workouts
+        for metric in self.features:
+            current_value = new_workout[metric]
+            target_value = self.top_metrics[metric]
 
-            if metrika == 'HRmax':
-                razlika = ciljna_vrednost - trenutna_vrednost
-                if razlika > 5:
-                    priporocila[
-                        metrika] = f"Povečajte maksimalni srčni utrip za {razlika:.1f} bpm z bolj intenzivnimi intervali"
-                elif razlika < -5:
-                    priporocila[metrika] = "Vaš HRmax je nenavadno visok - razmislite o posvetu z zdravnikom"
+            if metric == 'HRmax':
+                diff = target_value - current_value
+                if diff > 5:
+                    recommendations[
+                        metric] = f"Increase max heart rate by {diff:.1f} bpm through more intense intervals"
+                elif diff < -5:
+                    recommendations[metric] = "Your HRmax is unusually high - consider consulting a doctor"
 
-            elif metrika == 'HR%':
-                razlika = ciljna_vrednost - trenutna_vrednost
-                if razlika > 5:
-                    priporocila[
-                        metrika] = f"Preživite več časa v višjih območjih srčnega utripa (ciljajte na {ciljna_vrednost:.1f}% maksimalnega)"
+            elif metric == 'HR%':
+                diff = target_value - current_value
+                if diff > 5:
+                    recommendations[
+                        metric] = f"Spend more time in higher heart rate zones (aim for {target_value:.1f}% of max)"
 
-            elif metrika == 'TLI':
-                razlika = (ciljna_vrednost - trenutna_vrednost) / ciljna_vrednost
-                if razlika > 0.2:
-                    priporocila[
-                        metrika] = f"Povečajte skupno obremenitev vadbe za {razlika * 100:.1f}% z daljšim trajanjem ali večjo intenzivnostjo"
+            elif metric == 'TLI':
+                diff = (target_value - current_value) / target_value
+                if diff > 0.2:
+                    recommendations[
+                        metric] = f"Increase total workout load by {diff * 100:.1f}% through longer duration or higher intensity"
 
-            elif metrika == 'MET':
-                razlika = ciljna_vrednost - trenutna_vrednost
-                if razlika > 0.5:
-                    priporocila[metrika] = f"Izberite bolj energične aktivnosti za povečanje MET rezultata za {razlika:.1f}"
+            elif metric == 'MET':
+                diff = target_value - current_value
+                if diff > 0.5:
+                    recommendations[metric] = f"Choose more vigorous activities to increase MET score by {diff:.1f}"
 
-            elif metrika == 'WEI':
-                razlika = ciljna_vrednost - trenutna_vrednost
-                if razlika > 0.2:
-                    priporocila[metrika] = "Izboljšajte učinkovitost vadbe z izboljšanjem forme ali dodajanjem odpornosti"
-                elif razlika < -0.2:
-                    priporocila[metrika] = "Vaš WEI je nenavadno visok - preverite, da ne pretiravate z vadbo"
+            elif metric == 'WEI':
+                diff = target_value - current_value
+                if diff > 0.2:
+                    recommendations[metric] = "Increase workout efficiency by improving form or adding resistance"
+                elif diff < -0.2:
+                    recommendations[metric] = "Your WEI is unusually high - ensure you're not overtraining"
 
-        # Splošna priporočila na podlagi odstotka
-        odstotek = self.napovej_odstotek(nova_vadba)
-        if odstotek < 50:
-            priporocila[
-                'splošno'] = "Osredotočite se na doslednost - najprej ciljajte na redne vadbe, preden povečate intenzivnost"
-        elif odstotek < 75:
-            priporocila['splošno'] = "Poskusite vključiti intervalni trening za izboljšanje kakovosti vadbe"
+        # General recommendations based on percentile
+        percentile = self.predict_percentile(new_workout)
+        if percentile < 50:
+            recommendations[
+                'general'] = "Focus on consistency first - aim for regular workouts before increasing intensity"
+        elif percentile < 75:
+            recommendations['general'] = "Try incorporating interval training to boost your workout quality"
         else:
-            priporocila['splošno'] = "Vzdržujte odlično vadbeno rutino z ustreznim okrevanjem"
+            recommendations['general'] = "Maintain your excellent workout routine with proper recovery"
 
-        return priporocila
+        return recommendations
 
-    def shrani(self, pot_datoteke):
+    def save(self, filepath):
         """
-        Shrani komponente modela v datoteke z razširitvami .h5 in .pkl
+        Save the model components to files with .h5 and .pkl extensions
 
         Args:
-            pot_datoteke (str): Osnovna pot za shranjevanje datotek (brez razširitve)
+            filepath (str): Base path for saving files (without extension)
         """
-        # Shrani Keras model v .h5 formatu
-        self.model.save(f"{pot_datoteke}.h5")
+        # Save Keras model in .h5 format
+        self.model.save(f"{filepath}.h5")
 
-        # Shrani skalirnik in druge atribute v pickle datoteko
-        shrani_slovar = {
-            'lastnosti': self.lastnosti,
-            'najboljse_metrike': self.najboljse_metrike,
-            'skalirnik': self.skalirnik
+        # Save scaler and other attributes in a pickle file
+        save_dict = {
+            'features': self.features,
+            'top_metrics': self.top_metrics,
+            'scaler': self.scaler
         }
-        joblib.dump(shrani_slovar, f"{pot_datoteke}_atributi.pkl")
+        joblib.dump(save_dict, f"{filepath}_attrs.pkl")
 
 
-def ustvari_in_shrani_modele(podatkovni_dir="sorted_and_calculated_data",
-                             modelni_dir="models",
-                             vzorec_datotek="*_analysis.csv"):
+def create_and_save_models(data_dir="sorted_and_calculated_data",
+                           model_dir="models",
+                           file_pattern="*_analysis.csv"):
     """
-    Obdelaj vse analitične datoteke v imeniku in shrani trenirane modele.
+    Process all analysis files in a directory and save trained models
 
-    Argumenti:
-        podatkovni_dir (str): Imenik, ki vsebuje CSV datoteke.
-        modelni_dir (str): Imenik za shranjevanje treniranih modelov.
-        vzorec_datotek (str): Vzorec za iskanje analitičnih datotek.
+    Args:
+        data_dir (str): Directory containing the CSV files
+        model_dir (str): Directory to save trained models
+        file_pattern (str): Pattern to match analysis files
     """
-    # Ustvari imenik za modele, če ne obstaja
-    os.makedirs(modelni_dir, exist_ok=True)
+    # Create models directory if it doesn't exist
+    os.makedirs(model_dir, exist_ok=True)
 
-    # Poišči vse analitične datoteke
-    analiticne_datoteke = glob.glob(os.path.join(podatkovni_dir, vzorec_datotek))
+    # Find all analysis files
+    analysis_files = glob.glob(os.path.join(data_dir, file_pattern))
 
-    if not analiticne_datoteke:
-        print(f"Ni datotek, ki ustrezajo {vzorec_datotek} v {podatkovni_dir}")
+    if not analysis_files:
+        print(f"No files matching {file_pattern} found in {data_dir}")
         return
 
-    print(f"Najdenih {len(analiticne_datoteke)} analitičnih datotek za obdelavo...")
+    print(f"Found {len(analysis_files)} analysis files to process...")
 
-    for pot_datoteke in analiticne_datoteke:
-        # Izvleci osnovno ime (npr. "Running" iz "Running_analysis.csv")
-        osnovno_ime = os.path.basename(pot_datoteke).split('_')[0]
-        osnovna_pot_modela = os.path.join(modelni_dir, osnovno_ime)
+    for file_path in analysis_files:
+        # Extract base name (e.g., "Running" from "Running_analysis.csv")
+        base_name = os.path.basename(file_path).split('_')[0]
+        model_base_path = os.path.join(model_dir, base_name)
 
-        print(f"\nObdelujem {osnovno_ime}...")
+        print(f"\nProcessing {base_name}...")
 
         try:
-            # Ustvari in treniraj model
-            model = ModelOdstotkovVadbe(pot_datoteke)
+            # Create and train model
+            model = WorkoutPercentileModel(file_path)
 
-            # Shrani komponente modela
-            model.save(osnovna_pot_modela)
-            print(f"Uspešno shranjeno {osnovno_ime}.h5 in {osnovno_ime}_attrs.pkl")
+            # Save the model components
+            model.save(model_base_path)
+            print(f"Successfully saved {base_name}.h5 and {base_name}_attrs.pkl")
 
-            # Testiraj z vzorčno vadbo
-            testna_vadba = {
+            # Test with a sample workout
+            test_workout = {
                 'HRmax': 160,
                 'HR%': 75,
                 'TLI': 7000,
                 'MET': 6.5,
                 'WEI': 1.1
             }
-            percentil = model.predict_percentile(testna_vadba)
-            print(f"  Percentil testne vadbe: {percentil}")
+            percentile = model.predict_percentile(test_workout)
+            print(f"  Test workout percentile: {percentile}")
 
-            # Prikaži nekaj priporočil
-            priporocila = model.get_improvement_recommendations(testna_vadba)
-            print("  Vzorčna priporočila:")
-            for metrika, prip in list(priporocila.items())[:2]:  # Prikaži prvi 2 priporočili
-                print(f"  - {metrika}: {prip}")
+            # Show some recommendations
+            recs = model.get_improvement_recommendations(test_workout)
+            print("  Sample recommendations:")
+            for metric, rec in list(recs.items())[:2]:  # Show first 2 recommendations
+                print(f"  - {metric}: {rec}")
 
         except Exception as e:
-            print(f"Napaka pri obdelavi {pot_datoteke}: {str(e)}")
+            print(f"Error processing {file_path}: {str(e)}")
 
-    print("\nVsi modeli so obdelani!")
+    print("\nAll models processed!")
 
 
-def nalozi_model_vadbe(osnovna_pot_modela):
+def load_workout_model(model_base_path):
     """
-    Naloži shranjen model vadbe iz .h5 in .pkl datotek.
+    Load a saved workout model from .h5 and .pkl files
 
-    Argumenti:
-        osnovna_pot_modela (str): Osnovna pot do datotek modela (brez končnic).
+    Args:
+        model_base_path (str): Base path of the model files (without extensions)
 
-    Vrne:
-        Rekonstruiran objekt, podoben WorkoutPercentileModel (poenostavljena različica).
+    Returns:
+        A reconstructed WorkoutPercentileModel-like object (simplified version)
     """
 
-    # Ustvari pomožni razred za shranjevanje naloženega modela
-    class NalozenModelVadbe:
+    # Create a dummy class to hold the loaded model
+    class LoadedWorkoutModel:
         def __init__(self):
             pass
 
-    nalozen_model = NalozenModelVadbe()
+    loaded_model = LoadedWorkoutModel()
 
-    # Naloži Keras model
-    nalozen_model.model = tf.keras.models.load_model(f"{osnovna_pot_modela}.h5")
+    # Load Keras model
+    loaded_model.model = tf.keras.models.load_model(f"{model_base_path}.h5")
 
-    # Naloži atribute
-    atributi = joblib.load(f"{osnovna_pot_modela}_attrs.pkl")
-    for kljuc, vrednost in atributi.items():
-        setattr(nalozen_model, kljuc, vrednost)
+    # Load attributes
+    attrs = joblib.load(f"{model_base_path}_attrs.pkl")
+    for key, value in attrs.items():
+        setattr(loaded_model, key, value)
 
-    # Dodaj metodo za napovedovanje percentila
-    def napovej_percentil(self, nova_vadba):
-        # Pretvori vhod v numpy array
-        if isinstance(nova_vadba, dict):
-            vhodni_podatki = np.array([nova_vadba[lastnost] for lastnost in self.features]).reshape(1, -1)
+    # Add the predict_percentile method
+    def predict_percentile(self, new_workout):
+        # Convert input to numpy array
+        if isinstance(new_workout, dict):
+            input_data = np.array([new_workout[feat] for feat in self.features]).reshape(1, -1)
         else:
-            vhodni_podatki = np.array(nova_vadba).reshape(1, -1)
+            input_data = np.array(new_workout).reshape(1, -1)
 
-        # Skaliraj vhod
-        skaliran_vhod = self.scaler.transform(vhodni_podatki)
+        # Scale the input
+        scaled_input = self.scaler.transform(input_data)
 
-        # Napovej (izhod je 0-1, zato ga pomnožimo s 100 za percentil)
-        percentil = self.model.predict(skaliran_vhod, verbose=0)[0][0] * 100
+        # Predict (output is 0-1, so we multiply by 100 to get percentile)
+        percentile = self.model.predict(scaled_input, verbose=0)[0][0] * 100
 
-        return round(percentil, 2)
+        return round(percentile, 2)
 
-    nalozen_model.napovej_percentil = napovej_percentil.__get__(nalozen_model)
+    loaded_model.predict_percentile = predict_percentile.__get__(loaded_model)
 
-    # Dodaj metodo za pridobivanje priporočil za izboljšanje
-    def pridobi_priporocila_za_izboljsanje(self, nova_vadba):
-        priporocila = {}
-        for metrika in self.features:
-            trenutna_vrednost = nova_vadba[metrika]
-            ciljna_vrednost = self.top_metrics[metrika]
+    # Add the get_improvement_recommendations method
+    def get_improvement_recommendations(self, new_workout):
+        recommendations = {}
+        for metric in self.features:
+            current_value = new_workout[metric]
+            target_value = self.top_metrics[metric]
 
-            if metrika == 'HRmax':
-                razlika = ciljna_vrednost - trenutna_vrednost
-                if razlika > 5:
-                    priporocila[
-                        metrika] = f"Povečajte maksimalni srčni utrip za {razlika:.1f} bpm z bolj intenzivnimi intervali"
-                elif razlika < -5:
-                    priporocila[metrika] = "Vaš HRmax je nenavadno visok - razmislite o posvetu z zdravnikom"
+            if metric == 'HRmax':
+                diff = target_value - current_value
+                if diff > 5:
+                    recommendations[
+                        metric] = f"Increase max heart rate by {diff:.1f} bpm through more intense intervals"
+                elif diff < -5:
+                    recommendations[metric] = "Your HRmax is unusually high - consider consulting a doctor"
 
-            elif metrika == 'HR%':
-                razlika = ciljna_vrednost - trenutna_vrednost
-                if razlika > 5:
-                    priporocila[
-                        metrika] = f"Preživite več časa v višjih območjih srčnega utripa (ciljajte na {ciljna_vrednost:.1f}% maksimalnega)"
+            elif metric == 'HR%':
+                diff = target_value - current_value
+                if diff > 5:
+                    recommendations[
+                        metric] = f"Spend more time in higher heart rate zones (aim for {target_value:.1f}% of max)"
 
-            elif metrika == 'TLI':
-                razlika = (ciljna_vrednost - trenutna_vrednost) / ciljna_vrednost
-                if razlika > 0.2:
-                    priporocila[
-                        metrika] = f"Povečajte skupno obremenitev vadbe za {razlika * 100:.1f}% z daljšim trajanjem ali večjo intenzivnostjo"
+            elif metric == 'TLI':
+                diff = (target_value - current_value) / target_value
+                if diff > 0.2:
+                    recommendations[
+                        metric] = f"Increase total workout load by {diff * 100:.1f}% through longer duration or higher intensity"
 
-            elif metrika == 'MET':
-                razlika = ciljna_vrednost - trenutna_vrednost
-                if razlika > 0.5:
-                    priporocila[metrika] = f"Izberite bolj energične aktivnosti za povečanje MET rezultata za {razlika:.1f}"
+            elif metric == 'MET':
+                diff = target_value - current_value
+                if diff > 0.5:
+                    recommendations[metric] = f"Choose more vigorous activities to increase MET score by {diff:.1f}"
 
-            elif metrika == 'WEI':
-                razlika = ciljna_vrednost - trenutna_vrednost
-                if razlika > 0.2:
-                    priporocila[metrika] = "Izboljšajte učinkovitost vadbe z izboljšanjem forme ali dodajanjem odpornosti"
-                elif razlika < -0.2:
-                    priporocila[metrika] = "Vaš WEI je nenavadno visok - preverite, da ne pretiravate z vadbo"
+            elif metric == 'WEI':
+                diff = target_value - current_value
+                if diff > 0.2:
+                    recommendations[metric] = "Increase workout efficiency by improving form or adding resistance"
+                elif diff < -0.2:
+                    recommendations[metric] = "Your WEI is unusually high - ensure you're not overtraining"
 
-        percentil = self.napovej_percentil(nova_vadba)
-        if percentil < 50:
-            priporocila[
-                'splošno'] = "Osredotočite se na doslednost - najprej ciljajte na redne vadbe, preden povečate intenzivnost"
-        elif percentil < 75:
-            priporocila['splošno'] = "Poskusite vključiti intervalni trening za izboljšanje kakovosti vadbe"
+        percentile = self.predict_percentile(new_workout)
+        if percentile < 50:
+            recommendations[
+                'general'] = "Focus on consistency first - aim for regular workouts before increasing intensity"
+        elif percentile < 75:
+            recommendations['general'] = "Try incorporating interval training to boost your workout quality"
         else:
-            priporocila['splošno'] = "Vzdržujte odlično vadbeno rutino z ustreznim okrevanjem"
+            recommendations['general'] = "Maintain your excellent workout routine with proper recovery"
 
-        return priporocila
+        return recommendations
 
-    nalozen_model.pridobi_priporocila_za_izboljsanje = pridobi_priporocila_za_izboljsanje.__get__(nalozen_model)
+    loaded_model.get_improvement_recommendations = get_improvement_recommendations.__get__(loaded_model)
 
-    return nalozen_model
+    return loaded_model
 
 
 if __name__ == "__main__":
-    ustvari_in_shrani_modele()
+    create_and_save_models()
