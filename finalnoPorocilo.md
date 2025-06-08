@@ -30,13 +30,13 @@ Projekt združuje sodobne pristope iz področij strojnega učenja, spletnega raz
 
 Komercialna orodja kot so Strava, Garmin Connect, Apple Fitness ponujajo analize vadb, vendar pogosto z malo natančnostjo in minimalnim upoštevanjem uporabnikovih podatkov med vadbo. Večina temelji na zaklenjenih modelih brez razlage.
 
-Na področju znanstvene literature obstaja več del, ki se ukvarjajo s priporočili za telesno aktivnost in metodami za ocenjevanje intenzivnosti vadbe. Svetovna zdravstvena organizacija (WHO) je izdala smernice za telesno aktivnost mladih odraslih, ki vključujejo priporočene količine zmerne in intenzivne vadbe na teden [1].
+Na področju znanstvene literature obstaja več del, ki se ukvarjajo s priporočili za telesno aktivnost in metodami za ocenjevanje intenzivnosti vadbe. Svetovna zdravstvena organizacija (WHO) je izdala smernice za telesno aktivnost mladih odraslih, ki vključujejo priporočene količine zmerne in intenzivne vadbe na teden [[1]](#1).
 
-Pomemben prispevek k razumevanju vpliva vadbe na srčni utrip in prilagajanje intenzivnosti treninga predstavljajo raziskave, kot je delo Plewsa in sodelavcev, ki analizira spremenljivost srčnega utripa pri elitnih vzdržljivostnih športnikih ter razporeditev intenzivnosti treninga [2].
+Pomemben prispevek k razumevanju vpliva vadbe na srčni utrip in prilagajanje intenzivnosti treninga predstavljajo raziskave, kot je delo Plewsa in sodelavcev, ki analizira spremenljivost srčnega utripa pri elitnih vzdržljivostnih športnikih ter razporeditev intenzivnosti treninga [[2]](#2).
 
-Pri zasnovi modela za napovedovanje kakovosti vadbe smo uporabili podatkovno zbirko z realnimi podatki o različnih treningih, ki je dostopna na platformi Kaggle [3]. Ta podatkovna baza vključuje širok spekter metrik, kot so trajanje vadbe, razdalja, srčni utrip ipd., ter različnih okolij v katerih so vadbe bile izvedene (Cardio, Cycling, HIIT, Running, Strength, Yoga).
+Pri zasnovi modela za napovedovanje kakovosti vadbe smo uporabili podatkovno zbirko z realnimi podatki o različnih treningih, ki je dostopna na platformi Kaggle [[3]](#3). Ta podatkovna baza vključuje širok spekter metrik, kot so trajanje vadbe, razdalja, srčni utrip ipd., ter različnih okolij v katerih so vadbe bile izvedene (Cardio, Cycling, HIIT, Running, Strength, Yoga).
 
-Za razvoj umetne inteligence in nevronskih mrež smo se oprli na pregled delovanja umetnih nevronskih mrež, kot jih predstavljajo Zou in sodelavci [4], ter uporabili znano formulo za oceno maksimalnega srčnega utripa glede na starost, ki jo je predlagal Tanaka [5]. Skupaj ta dela predstavljajo teoretično in praktično osnovo, na kateri smo zgradili naš pristop.
+Za razvoj umetne inteligence in nevronskih mrež smo se oprli na pregled delovanja umetnih nevronskih mrež, kot jih predstavljajo Zou in sodelavci [[4]](#4), ter uporabili znano formulo za oceno maksimalnega srčnega utripa glede na starost, ki jo je predlagal Tanaka [[5]]. Skupaj ta dela predstavljajo teoretično in praktično osnovo, na kateri smo zgradili naš pristop.
 
 V literaturi so bile predlagane različne metrike za oceno vadbe, med njimi MET, TLI in HR%, ki so bile uporabljene tudi v našem modelu.
 
@@ -199,3 +199,109 @@ Implementacija osnovnih komponent:
 - Vizualizacija percentilov in priporočil
 - Integracija s Flask API-ji
 
+![spletnaStrana](spletnaStran.png)
+
+# POSKUSI IN REZULTATI
+
+Za preverjanje funkcionalnosti razvitega sistema smo izvedli več testov, tako z umetno pripravljenimi primeri, podatki podatkovne baze, ter lastno pridobljenimi podatki. Glavni namen testiranj je bil oceniti natančnost modela. Prav tako smo želeli preveriti, ali je sistem natančen pri vseh različnih tipih vadb in ali so generirana priporočila relevantna glede na vhodne podatke.
+
+## Testni primeri
+
+Funkcija `test_model_with_hardcoded_data()` definira 4 tipe uporabnikov:
+
+- **Beginner**  
+  ```json
+  {
+    "HRmax": 150,
+    "HR%": 70,
+    "TLI": 5000,
+    "MET": 5,
+    "WEI": 0.5
+  }
+  ```
+
+  ![beginnerImage](beginnerImage.png)
+
+- **Intermediate**  
+  ```json
+  {
+    "HRmax": 160,
+    "HR%": 80,
+    "TLI": 8000,
+    "MET": 6,
+    "WEI": 1
+  }
+  ```
+
+  ![intermediateImage](intermediateImage.png)
+
+ - **Advanced**  
+    ```json
+    {
+      "HRmax": 182.8,
+      "HR%": 91.9,
+      "TLI": 12264,
+      "MET": 8.05,
+      "WEI": 1.38
+    }
+    ```
+
+    ![advancedImage](advancedImage.png)
+
+ - **Elite**  
+    ```json
+    {
+      "HRmax": 208,
+      "HR%": 100,
+      "TLI": 20800,
+      "MET": 10,
+      "WEI": 2
+    }
+    ```
+
+    ![gigaChadImage](gigaChadImage.png)
+
+ - **Lastno pridobljeni podatki (Leon Tikvič)**
+
+    ![mojConsoole](mojConsoole.png)
+    ![mojConsoole](mojStran.png)
+
+## Podrobnosti testiranja
+
+Za vsak testni primer smo analizirali vhodne vrednosti ter spremljali izračunane metrike in napovedan percentil. Rezultati so pokazali, da sistem pravilno identificira in oceni intenziteto treninga ter da lahko jasno priporoči izboljšave, kot so povečanje intenzivnosti ali trajanja vadbe.
+
+# ZAKLJUČEK
+
+Projekt je dosegel vse zastavljene cilje. Zgrajen je bil sistem, ki avtomatsko analizira vadbene podatke, izračuna napredne metrike, napove kakovost vadbe in poda konkretna priporočila.
+
+Razviti sistem dokazuje, kako lahko sodobne tehnologije in obdelave podatkov pripomorejo k bolj učinkovitemu spremljanju in izboljševanju telesne pripravljenosti. Ker sistem nudi jasna pojasnila rezultatov in intuitiven vmesnik, ga lahko brez težav uporabljajo tako začetniki kot tudi izkušeni športniki ali trenerji.
+
+Zaradi strukturiranega pristopa in uporabe ločenih modelov za vsak tip vadbe ima sistem potencial za nadaljnjo rast in nadgradnjo. Z dodatkom več podatkov, kompleksnejših nevronskih arhitektur ali vključitvijo dodatnih parametrov (npr. spanje, prehrana, stres) bi lahko izboljšali natančnost in razumevanje vzorcev vadbe.
+
+## Možnosti za prihodnji razvoj:
+
+- Sinhronizacija z obstoječimi aplikacijami (Garmin, Apple), kar bi omogočilo samodejni uvoz podatkov in večjo uporabniško enostavnost.
+- Vizualna analiza napredka uporabnika skozi čas z uporabo časovnih grafov, poročil in trendnih analiz.
+- Vključitev dodatnih dimenzij za modeliranje, kot so spanje, prehrana, stres in regeneracija, kar bi omogočilo bolj celosten vpogled v zdravje uporabnika.
+- Implementacija mobilne aplikacije za večjo dostopnost sistema in obvestila v realnem času.
+- Razvoj personaliziranih načrtov vadbe na podlagi analize preteklih treningov in napovedi prihodnje učinkovitosti.
+
+# VIRI
+
+- [Povezljivi sistemi in inteligentne storitve - GitHub](https://github.com/dolfa321/POVEZLJIVI-SISTEMI-IN-INTELIGENTNE-STORITVE)
+
+- Uporabljene knjižnice: pandas, numpy, tensorflow, flask, scikit-learn, joblib
+
+- Dokumentacija o FIT datotekah: [https://www.thisisant.com/resources/fit](https://www.thisisant.com/resources/fit)
+
+- Akademski viri o srčnem utripu in MET izračunih:
+
+  1. WHO. (2020). *Physical activity and young adults: Recommendations for health and fitness*. World Health Organization.
+
+  2. Plews, D. J., Laursen, P. B., Kilding, A. E., & Buchheit, M. (2017). Heart rate variability and training intensity distribution in elite endurance athletes. *Journal of Science and Medicine in Sport*, 20(8), 798–803.
+
+  3. Podatkovna baza: [https://www.kaggle.com/datasets/adilshamim8/workout-and-fitness-tracker-data](https://www.kaggle.com/datasets/adilshamim8/workout-and-fitness-tracker-data)
+
+  4. Zou, J., Han, Y., & So, S.-S. (2009). Overview of artificial neural networks. In *Artificial neural networks: methods and applications* (pp. 14–22).
+
+  5. Tanaka, H., Monahan, K. D., & Seals, D. R. (2001). Age-predicted maximal heart rate revisited. *Journal of the American College of Cardiology*, 37(1), 153–156.
